@@ -86,8 +86,17 @@ async fn main() -> Result<(), Error> {
         .await?;
 
     let account_usage: AccountUsage = serde_json::from_str(&body).unwrap();
+    let usage_total = get_total_usage_cost(&account_usage.usage_records);
 
-    println!("Page size is {}", account_usage.page_size);
+    println!("Twilio Account Usage");
+
+    let data_iter = account_usage.usage_records.iter();
+    for record in data_iter {
+        println!("{},{},{},{}", record.start_date, record.end_date, record.category, record.price);
+    }
+
+    println!("Total records: {}", account_usage.page_size);
+    println!("Total cost: {}", usage_total);
 
     Ok(())
 }
