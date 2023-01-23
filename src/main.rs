@@ -1,6 +1,5 @@
 use dotenv::dotenv;
 use reqwest::Client;
-use reqwest::header::ACCEPT;
 use reqwest::Error;
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -69,12 +68,8 @@ async fn main() -> Result<(), Error> {
 
     let account_sid = env::var("TWILIO_ACCOUNT_SID").unwrap();
     let auth_token = env::var("TWILIO_AUTH_TOKEN").unwrap();
-    let password: Option<String> = Some(auth_token);
-    let base_uri = "https://api.twilio.com/2010-04-01";
-
     let request_url = format!(
-        "{base_uri}/Accounts/{twilio_account_sid}/Usage/Records/LastMonth.json?PageSize={page_size}",
-        base_uri = base_uri,
+        "https://api.twilio.com/2010-04-01/Accounts/{twilio_account_sid}/Usage/Records/LastMonth.json?PageSize={page_size}",
         twilio_account_sid = account_sid,
         page_size = 20
     );
@@ -82,8 +77,7 @@ async fn main() -> Result<(), Error> {
     let client = Client::new();
     let response = client
         .get(&request_url)
-        .header(ACCEPT, "application/json")
-        .basic_auth(account_sid, password)
+        .basic_auth(account_sid, Some(auth_token))
         .send()
         .await?;
 
