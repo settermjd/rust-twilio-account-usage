@@ -52,6 +52,17 @@ struct AccountUsage {
     usage_records: Vec<UsageRecord>,
 }
 
+fn get_total_usage_cost(usage_records: &Vec<UsageRecord>) -> f64 {
+    let mut usage_total = 0.0;
+    let au_iter = usage_records.iter();
+    for val in au_iter {
+        let price: f64 = val.price.parse().unwrap();
+        usage_total = usage_total + price;
+    }
+
+    return usage_total;
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     dotenv().ok();
